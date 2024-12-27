@@ -210,8 +210,11 @@ BSSRDF SurfaceInteraction::GetBSSRDF(const RayDifferential &ray,
     return material.GetBSSRDF(UniversalTextureEvaluator(), *this, lambda, scratchBuffer);
 }
 
-PBRT_CPU_GPU SampledSpectrum SurfaceInteraction::Le(Vector3f w,
-                                       const SampledWavelengths &lambda) const {
+PBRT_CPU_GPU SampledSpectrum SurfaceInteraction::Le(
+    Vector3f w,
+    const SampledWavelengths &lambda
+) const
+{
     return areaLight ? areaLight.L(p(), n, uv, w, lambda) : SampledSpectrum(0.f);
 }
 

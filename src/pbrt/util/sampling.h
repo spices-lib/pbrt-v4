@@ -388,7 +388,8 @@ PBRT_CPU_GPU inline Point2f InvertUniformHemisphereSample(Vector3f w) {
     return Point2f(w.z, phi / (2 * Pi));
 }
 
-PBRT_CPU_GPU inline Vector3f SampleUniformSphere(Point2f u) {
+PBRT_CPU_GPU inline Vector3f SampleUniformSphere(Point2f u)
+{
     Float z = 1 - 2 * u[0];
     Float r = SafeSqrt(1 - Sqr(z));
     Float phi = 2 * Pi * u[1];

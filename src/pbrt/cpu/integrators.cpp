@@ -63,9 +63,12 @@ std::string RandomWalkIntegrator::ToString() const {
 Integrator::~Integrator() {}
 
 // ImageTileIntegrator Method Definitions
-void ImageTileIntegrator::Render() {
+void ImageTileIntegrator::Render()
+{
+    
     // Handle debugStart, if set
-    if (!Options->debugStart.empty()) {
+    if (!Options->debugStart.empty())
+    {
         std::vector<int> c = SplitStringToInts(Options->debugStart, ',');
         if (c.empty())
             ErrorExit("Didn't find integer values after --debugstart: %s",
@@ -224,8 +227,13 @@ void ImageTileIntegrator::Render() {
 }
 
 // RayIntegrator Method Definitions
-void RayIntegrator::EvaluatePixelSample(Point2i pPixel, int sampleIndex, Sampler sampler,
-                                        ScratchBuffer &scratchBuffer) {
+void RayIntegrator::EvaluatePixelSample(
+    Point2i pPixel,
+    int sampleIndex,
+    Sampler sampler,
+    ScratchBuffer &scratchBuffer
+) {
+    
     // Sample wavelengths for the ray
     Float lu = sampler.Get1D();
     if (Options->disableWavelengthJitter)
@@ -293,8 +301,11 @@ STAT_COUNTER("Intersections/Regular ray intersection tests", nIntersectionTests)
 STAT_COUNTER("Intersections/Shadow ray intersection tests", nShadowTests);
 
 // Integrator Method Definitions
-pstd::optional<ShapeIntersection> Integrator::Intersect(const Ray &ray,
-                                                        Float tMax) const {
+pstd::optional<ShapeIntersection> Integrator::Intersect(
+    const Ray &ray,
+    Float tMax
+) const
+{
     ++nIntersectionTests;
     DCHECK_NE(ray.d, Vector3f(0, 0, 0));
     if (aggregate)
@@ -312,8 +323,11 @@ bool Integrator::IntersectP(const Ray &ray, Float tMax) const {
         return false;
 }
 
-SampledSpectrum Integrator::Tr(const Interaction &p0, const Interaction &p1,
-                               const SampledWavelengths &lambda) const {
+SampledSpectrum Integrator::Tr(
+    const Interaction &p0,
+    const Interaction &p1,
+    const SampledWavelengths &lambda
+) const {
     RNG rng(Hash(p0.p()), Hash(p1.p()));
 
     // :-(
@@ -386,14 +400,20 @@ SimplePathIntegrator::SimplePathIntegrator(int maxDepth, bool sampleLights,
       sampleBSDF(sampleBSDF),
       lightSampler(lights, Allocator()) {}
 
-SampledSpectrum SimplePathIntegrator::Li(RayDifferential ray, SampledWavelengths &lambda,
-                                         Sampler sampler, ScratchBuffer &scratchBuffer,
-                                         VisibleSurface *) const {
+SampledSpectrum SimplePathIntegrator::Li(
+    RayDifferential ray,
+    SampledWavelengths &lambda,
+    Sampler sampler,
+    ScratchBuffer &scratchBuffer,
+    VisibleSurface *
+) const
+{
     // Estimate radiance along ray using simple path tracing
     SampledSpectrum L(0.f), beta(1.f);
     bool specularBounce = true;
     int depth = 0;
-    while (beta) {
+    while (beta)
+    {
         // Find next _SimplePathIntegrator_ vertex and accumulate contribution
         // Intersect _ray_ with scene
         pstd::optional<ShapeIntersection> si = Intersect(ray);
@@ -488,13 +508,26 @@ std::string SimplePathIntegrator::ToString() const {
 }
 
 std::unique_ptr<SimplePathIntegrator> SimplePathIntegrator::Create(
-    const ParameterDictionary &parameters, Camera camera, Sampler sampler,
-    Primitive aggregate, std::vector<Light> lights, const FileLoc *loc) {
+    const ParameterDictionary &parameters,
+    Camera camera,
+    Sampler sampler,
+    Primitive aggregate,
+    std::vector<Light> lights,
+    const FileLoc *loc
+) {
+    
     int maxDepth = parameters.GetOneInt("maxdepth", 5);
     bool sampleLights = parameters.GetOneBool("samplelights", true);
     bool sampleBSDF = parameters.GetOneBool("samplebsdf", true);
-    return std::make_unique<SimplePathIntegrator>(maxDepth, sampleLights, sampleBSDF,
-                                                  camera, sampler, aggregate, lights);
+    return std::make_unique<SimplePathIntegrator>(
+        maxDepth,
+        sampleLights,
+        sampleBSDF,
+        camera,
+        sampler,
+        aggregate,
+        lights
+    );
 }
 
 // LightPathIntegrator Method Definitions
@@ -3647,10 +3680,18 @@ std::string FunctionIntegrator::ToString() const {
 }
 
 std::unique_ptr<Integrator> Integrator::Create(
-    const std::string &name, const ParameterDictionary &parameters, Camera camera,
-    Sampler sampler, Primitive aggregate, std::vector<Light> lights,
-    const RGBColorSpace *colorSpace, const FileLoc *loc) {
-    std::unique_ptr<Integrator> integrator;
+    const std::string &name,
+    const ParameterDictionary &parameters,
+    Camera camera,
+    Sampler sampler,
+    Primitive aggregate,
+    std::vector<Light> lights,
+    const RGBColorSpace *colorSpace,
+    const FileLoc *loc
+) {
+
+    // 11 Integrator
+    std::unique_ptr<Integrator> integrator = nullptr;
     if (name == "path")
         integrator =
             PathIntegrator::Create(parameters, camera, sampler, aggregate, lights, loc);
